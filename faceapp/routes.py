@@ -13,8 +13,8 @@ import os
 import cv2
 from PIL import Image
 import numpy as np
-from faceapp.train_data import train_images
-from faceapp.face_detector import face_recog
+# from faceapp.train_data import train_images
+# from faceapp.face_detector import face_recog
           
 
 @app.route('/')
@@ -173,40 +173,40 @@ def attendance_details():
     return render_template('attendance_details.html')
 
 
-@app.route('/train_data')
-def train_data():
-    # data_dir = ('uploads')
-    # path = [os.path.join(data_dir, file) for file in os.listdir(data_dir)]
+# @app.route('/train_data')
+# def train_data():
+#     # data_dir = ('uploads')
+#     # path = [os.path.join(data_dir, file) for file in os.listdir(data_dir)]
         
-    # faces = []
-    # ids = []
+#     # faces = []
+#     # ids = []
 
-    # for image_path in path:
-    #     # img = cv2.imread(image)
-    #     # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    #     img = Image.open(image_path).convert('L')    # conversion to grayscale image
-    #     image_np = np.array(img, 'uint8')
-    #     # img_path = os.path.split(image)[1]
-    #     # id = Student.query.filter_by(photo_sample=img_path).first()
-    #     # id = int(((os.path.split(image_path)[1]).split('.')[1]).split('_')[0])
-    #     id = int(image_path.split(".")[1])
+#     # for image_path in path:
+#     #     # img = cv2.imread(image)
+#     #     # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+#     #     img = Image.open(image_path).convert('L')    # conversion to grayscale image
+#     #     image_np = np.array(img, 'uint8')
+#     #     # img_path = os.path.split(image)[1]
+#     #     # id = Student.query.filter_by(photo_sample=img_path).first()
+#     #     # id = int(((os.path.split(image_path)[1]).split('.')[1]).split('_')[0])
+#     #     id = int(image_path.split(".")[1])
         
 
-    #     faces.append(image_np)
-    #     ids.append(id)
-    #     # cv2.imshow('Training', image_np)
-    #     cv2.waitKey(1) == 13
-    # ids = np.array(ids)
-    # # labels=[0]*len(faces)
+#     #     faces.append(image_np)
+#     #     ids.append(id)
+#     #     # cv2.imshow('Training', image_np)
+#     #     cv2.waitKey(1) == 13
+#     # ids = np.array(ids)
+#     # # labels=[0]*len(faces)
 
-    # classifier = cv2.face.LBPHFaceRecognizer_create()
-    # classifier.train(faces, ids)
-    # classifier.write('classifier.xml')
+#     # classifier = cv2.face.LBPHFaceRecognizer_create()
+#     # classifier.train(faces, ids)
+#     # classifier.write('classifier.xml')
 
-    # cv2.destroyAllWindows()
-    train_images()
-    flash(f'Data Sets Trained Successfully!', category='success')
-    return render_template('train_data.html')
+#     # cv2.destroyAllWindows()
+#     train_images()
+#     flash(f'Data Sets Trained Successfully!', category='success')
+#     return render_template('train_data.html')
 
 
 # def attendance(id, roll_no, name):
@@ -291,8 +291,9 @@ def gen_frames():
                             roll_list.append(entry[0])
                     if roll not in roll_list:
                             now = datetime.now()
-                            dtString = now.strftime('%H:%M:%S')
-                            f.writelines(f'\n{roll},{name}, {dtString}')
+                            # attendance_time = now.strftime('%H:%M:%S')
+                            attendance_date = now.strftime('%d-%m-%Y')
+                            f.writelines(f'\n{roll}, {name}, {attendance_date}')
 
 
 
@@ -317,13 +318,15 @@ def gen_frames():
 
                     if matches[match_index]:
                             roll = roll_nos[match_index]
-                            name = names[match_index]
+                            # name = names[match_index]
+                            result = Student.query.filter_by(roll_no=roll).first()
+                            name = result.name
                             y1, x2, y2, x1 = face_loc
                             y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
                             cv2.rectangle (img, (x1, y1), (x2, y2), (128, 0, 128), 2)
-                            cv2.rectangle (img, (x1, y2+90), (x2, y2), (128, 0, 128), cv2.FILLED)
-                            cv2.putText(img, f'ROLL NO: {roll}', (x1+6, y2+30), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
-                            cv2.putText(img, f'NAME: {name}', (x1+12, y2+60), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+                            # cv2.rectangle (img, (x1, y2+90), (x2, y2), (128, 0, 128), cv2.FILLED)
+                            cv2.putText(img, f'ROLL NO: {roll}', (x1+6, y2+30), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 0), 2)
+                            cv2.putText(img, f'NAME: {name}', (x1+12, y2+60), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 0), 2)
                             mark_attendance(roll, name)
 
 
