@@ -51,8 +51,3 @@ class Student(db.Model):
     def __repr__(self):
         return f'{self.roll_no}'
 
-
-# class Photo(db.Model):
-#     id = db.Column(db.Integer(), primary_key=True)
-#     photo_sample = db.Column(db.String())
-#     owner = db.Column(db.Integer(), db.ForeignKey('student.id'))

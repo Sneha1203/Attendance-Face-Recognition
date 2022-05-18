@@ -2,7 +2,15 @@
 
 {% block content %}
 
-<p>this is our home page</p>
+<section class="main-section">
+        <div class="main-div">
+                <h1>WELCOME TO <span>RECOGNITO!</span></h1>
+                <p>Recognito is the only solution you need to take attendance in a fun & hassle - free way!</p>
+                <a class="btn" href="{{ url_for('login') }}">GET STARTED</a>
+        </div>
+        <div>
+                <img src = "{{ url_for ('static', filename='images/logo (1).svg') }}">
+        </div>
+</section>
 
-        <a class="btn btn-primary" href="{{ url_for('login') }}">GET STARTED</a>
 {% endblock%}
