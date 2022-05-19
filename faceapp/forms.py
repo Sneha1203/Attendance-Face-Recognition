@@ -71,4 +71,13 @@ class UploadForm(FlaskForm):
     photo_sample = FileField(label='Upload a Photo: ', validators=[DataRequired()])
     submit = SubmitField(label='Upload')
     
+    
 
+class FilterAttendanceForm(FlaskForm):
+    year = SelectField(label='Year: ', validators=[DataRequired()], choices=YEAR_CHOICES)
+    dept = SelectField(label='Department: ', validators=[DataRequired()], choices=DEPT_CHOICES)
+    semester = SelectField(label='Semester: ', validators=[DataRequired()], choices=SEMESTER_CHOICES)
+    teacher = StringField(label='Teacher: ', validators=[Length(min=2, max=20),DataRequired()])
+    course = SelectField(label='Course: ', validators=[DataRequired()], choices=COURSE_CHOICES)
+    section = SelectField(label='Section: ', validators=[DataRequired()], choices=SECTION_CHOICES)
+    submit = SubmitField(label='Filter Attendance')

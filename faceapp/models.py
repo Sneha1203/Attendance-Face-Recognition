@@ -34,6 +34,7 @@ class User(db.Model, UserMixin):
 
 class Student(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
+    days_present = db.Column(db.Integer(), nullable=True, default=0)
     dept = db.Column(db.String(length=10), nullable=False)
     course = db.Column(db.String(length=10), nullable=False)
     year = db.Column(db.String(length=20), nullable=False)
@@ -46,8 +47,20 @@ class Student(db.Model):
     email = db.Column(db.String(length=20), unique=True, nullable=False)
     teacher = db.Column(db.String(length=20), nullable=False)
     photo_sample = db.Column(db.String(), nullable=True, default='NONE')
-    # photo = db.relationship('Photo', backref='upload_photo')
+    attendance = db.relationship('Attendance', backref='attendance', lazy=True)
 
     def __repr__(self):
         return f'{self.roll_no}'
 
+
+
+class Attendance(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(), nullable=False)
+    roll_no = db.Column(db.Integer(), primary_key=True, nullable=False)
+    time = db.Column(db.String(), nullable=False)
+    date = db.Column(db.String(), primary_key=True, nullable=False)
+    student = db.Column(db.Integer(), db.ForeignKey('student.id'))
+
+    def __repr__(self):
+        return f'{self.roll_no}, {self.date}'

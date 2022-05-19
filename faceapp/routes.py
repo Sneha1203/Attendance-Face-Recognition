@@ -1,17 +1,18 @@
+from sqlalchemy import func
 from faceapp import app
 from faceapp import db
 from flask import render_template, redirect, url_for, flash, request, Response
 import face_recognition
-from faceapp.models import User, Student
-from faceapp.forms import LoginUserForm, RegisterStudentForm, RegisterUserForm, UploadForm
+from faceapp.models import Attendance, User, Student
+from faceapp.forms import LoginUserForm, RegisterStudentForm, RegisterUserForm, UploadForm, FilterAttendanceForm
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
-import uuid as uuid
 from datetime import datetime
 import os 
 import cv2
 from PIL import Image
 import numpy as np
+import pandas as pd
 
           
 
@@ -122,12 +123,78 @@ def logout():
     flash(f'You have logged out successfully!', category='info')
     return redirect(url_for('home'))
 
+# def load_data():
+#     file_name = 'attendance.csv'
+#     colnames = ['roll_no', 'name', 'attendance_date', 'attendance_time']
+#     data = pd.read_csv(file_name, names=colnames, skiprows=1)
+#     data.sort_values(by=['roll_no', 'attendance_date', 'attendance_time'], inplace=True)
+#     data.drop_duplicates(subset=['roll_no', 'attendance_date'], keep='first', inplace=True)
+#     data.to_csv('sorted_attendance.csv', header=False, index=False)
+#     del data
+    
+
+@app.route('/filter_attendance', methods=['GET', 'POST'])
+def filter_attendance():
+    # load_data()
+    file_name = 'attendance.csv'
+    colnames = ['roll_no', 'name', 'attendance_date', 'attendance_time']
+    data = pd.read_csv(file_name, names=colnames, skiprows=1)
+    data.sort_values(by=['roll_no', 'attendance_date', 'attendance_time'], inplace=True)
+    data.drop_duplicates(subset=['roll_no', 'attendance_date'], keep='first', inplace=True)
+    data.to_csv('sorted_attendance.csv', header=False, index=False)
+    del data
+    data = np.genfromtxt('sorted_attendance.csv', delimiter=',', skip_header=1, dtype=(int, str, str, str))
+    records = data.tolist()
+
+    for record in records:
+        attendance_record = Attendance(
+            name=record,
+            roll_no=record,
+            time=record,
+            date=record,
+            student=Student.query.get(record[0]).id
+        ) 
+        db.session.add(attendance_record)
+        db.session.commit()
+
+    del data
+    # get data from user through attenance form to filter the attendance
+    form = FilterAttendanceForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            dept = form.dept.data
+            year = form.year.data
+            semester = form.semester.data
+            teacher = form.teacher.data
+            course = form.course.data
+            section = form.section.data
+
+            students = Student.query.filter(dept==dept & year==year & semester==semester & teacher==teacher & course==course & section==section)
+            for student in students:
+                roll_to_count = student.roll_no
+                no_of_present = Attendance.query.filter_by(roll_no=roll_to_count).count()
+                student.days_present = no_of_present
+                db.session.commit()
+            return redirect(url_for('attendance_details', dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section, **request.args))
+        if form.errors != {}:
+            for err_msg in form.errors.values():
+                flash(f'There was an error while fetching attendance details: {err_msg}',category='danger')
+
+    return render_template('filter_attendance.html', form=form)
+
+
 
 @app.route('/attendance_details')
 def attendance_details():
-    return render_template('attendance_details.html')
+    dept = request.args.get('dept')
+    year = request.args.get('year')
+    semester = request.args.get('semester')
+    teacher = request.args.get('teacher')
+    course = request.args.get('course')
+    section = request.args.get('section')
+    students = Student.query.filter_by(dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)
 
-
+    return render_template('attendance_details.html', students=students, dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)
 
 
 def gen_frames():
@@ -151,7 +218,7 @@ def gen_frames():
             return encode_list
 
     def mark_attendance(roll, name):
-            with open ('Attendance.csv', 'r+') as f:
+            with open ('attendance.csv', 'r+') as f:
                     my_data_list = f.readlines()
                     roll_list = []
                     for line in my_data_list:
@@ -161,7 +228,7 @@ def gen_frames():
                             now = datetime.now()
                             attendance_time = now.strftime('%H:%M:%S')
                             attendance_date = now.strftime('%d-%m-%Y')
-                            f.writelines(f'\n{roll}, {name}, {attendance_date}, {attendance_time}')
+                            f.writelines(f'\n{roll},{name},{attendance_date},{attendance_time}')
 
 
 
