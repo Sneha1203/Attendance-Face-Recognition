@@ -57,9 +57,9 @@ class Student(db.Model):
 class Attendance(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False)
-    roll_no = db.Column(db.Integer(), primary_key=True, nullable=False)
+    roll_no = db.Column(db.Integer(), nullable=False)
     time = db.Column(db.String(), nullable=False)
-    date = db.Column(db.String(), primary_key=True, nullable=False)
+    date = db.Column(db.String(), nullable=False)
     student = db.Column(db.Integer(), db.ForeignKey('student.id'))
 
     def __repr__(self):

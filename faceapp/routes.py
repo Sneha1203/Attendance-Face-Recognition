@@ -1,3 +1,4 @@
+from traceback import print_stack
 from sqlalchemy import func
 from faceapp import app
 from faceapp import db
@@ -136,28 +137,44 @@ def logout():
 @app.route('/filter_attendance', methods=['GET', 'POST'])
 def filter_attendance():
     # load_data()
+    # file_name = 'attendance.csv'
+    # colnames = ['roll_no', 'name', 'attendance_date', 'attendance_time']
+    # data = pd.read_csv(file_name, names=colnames, skiprows=1)
+    # data.sort_values(by=['roll_no', 'attendance_date', 'attendance_time'], inplace=True)
+    # data.drop_duplicates(subset=['roll_no', 'attendance_date'], keep='first', inplace=True)
+    # data.to_csv('sorted_attendance.csv', header=False, index=False)
+    # data = np.genfromtxt('sorted_attendance.csv', delimiter=',', skip_header=1, dtype=(int, str, str, str))
+
     file_name = 'attendance.csv'
     colnames = ['roll_no', 'name', 'attendance_date', 'attendance_time']
     data = pd.read_csv(file_name, names=colnames, skiprows=1)
     data.sort_values(by=['roll_no', 'attendance_date', 'attendance_time'], inplace=True)
     data.drop_duplicates(subset=['roll_no', 'attendance_date'], keep='first', inplace=True)
-    data.to_csv('sorted_attendance.csv', header=False, index=False)
-    del data
-    data = np.genfromtxt('sorted_attendance.csv', delimiter=',', skip_header=1, dtype=(int, str, str, str))
-    records = data.tolist()
-
+    data.to_csv('sorted_attendance.csv', header=colnames, index=True)
+    
+    # attendance_file = open('attendance.csv', 'r+')
+    # attendance_file.truncate(1)
+    # attendance_file.close()
+    
+    records = np.genfromtxt('sorted_attendance.csv', delimiter=',', skip_header=1, encoding='utf-8', converters = {0: lambda s: int(s), 1: lambda s: int(s), 2: lambda s: str(s), 3: lambda s: str(s), 4: lambda s: str(s)})
+    records = records.tolist()
     for record in records:
+        present_student = Student.query.filter_by(roll_no=record[1]).first()
         attendance_record = Attendance(
-            name=record,
-            roll_no=record,
-            time=record,
-            date=record,
-            student=Student.query.get(record[0]).id
-        ) 
+            id=record[0],
+            name=record[2],
+            roll_no=record[1],
+            time=record[4],
+            date=record[3],
+            student=present_student.id
+        )
         db.session.add(attendance_record)
         db.session.commit()
 
-    del data
+    # sorted_attendance_file = open('sorted_attendance.csv', 'r+')
+    # sorted_attendance_file.truncate(1)
+    # sorted_attendance_file.close()
+
     # get data from user through attenance form to filter the attendance
     form = FilterAttendanceForm()
     if request.method == 'POST':
@@ -168,8 +185,9 @@ def filter_attendance():
             teacher = form.teacher.data
             course = form.course.data
             section = form.section.data
+            
+            students = Student.query.filter_by(dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)
 
-            students = Student.query.filter(dept==dept & year==year & semester==semester & teacher==teacher & course==course & section==section)
             for student in students:
                 roll_to_count = student.roll_no
                 no_of_present = Attendance.query.filter_by(roll_no=roll_to_count).count()
@@ -193,7 +211,8 @@ def attendance_details():
     course = request.args.get('course')
     section = request.args.get('section')
     students = Student.query.filter_by(dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)
-
+    # roll_nos = Student.query(Student.roll_no).filter_by(dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)
+    # attendance = Attendance.query.filter_by(roll_nos).all()
     return render_template('attendance_details.html', students=students, dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)
 
 

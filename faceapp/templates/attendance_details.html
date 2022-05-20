@@ -28,18 +28,19 @@ attendance Details
 
             <tbody>
                 {% for student in students %}
+                    {% for present in student.attendance %}
+
                     <tr>
                         <td>{{ student.name }}</td>
                         <td>{{ student.roll_no }}</td>
-                        {% for present in student.attendance %}
                         <td>{{ present.time }}</td>
                         <td>{{ present.date }}</td>
-                        {% endfor %}
                         <td>{{ student.email }}</td>
                         <td>{{ student.mobile_no }}</td>
                         <td>{{ student.gender }}</td>
                         
                     </tr>
+                    {% endfor %}
                 {% endfor %}
             </tbody>
         </table>
