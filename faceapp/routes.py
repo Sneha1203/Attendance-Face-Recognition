@@ -64,16 +64,18 @@ def upload_photo():
         photo_to_upload = Student(roll_no=form.roll_no.data,
                                   photo_sample=form.photo_sample.data)
 
-        student = Student.query.get(form.roll_no.data)
+        student = Student.query.filter_by(roll_no=form.roll_no.data).first()
 
         file_name = photo_to_upload.photo_sample.filename
-        pic_name = 'Student' + '.' + str(student.id) + '.' + file_name
+        pic_name = 'Student' + '.' + str(student.roll_no) + '.' + file_name
         saver = request.files['photo_sample']
         saver.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
 
         
         student.photo_sample = pic_name
-        db.session.commit()            
+        db.session.commit()
+        flash(f'Photo has been updated succesfully!', category='success')
+
     return render_template('upload_photo.html', form=form)
 
 
@@ -159,17 +161,21 @@ def filter_attendance():
     records = np.genfromtxt('sorted_attendance.csv', delimiter=',', skip_header=1, encoding='utf-8', converters = {0: lambda s: int(s), 1: lambda s: int(s), 2: lambda s: str(s), 3: lambda s: str(s), 4: lambda s: str(s)})
     records = records.tolist()
     for record in records:
-        present_student = Student.query.filter_by(roll_no=record[1]).first()
-        attendance_record = Attendance(
-            id=record[0],
-            name=record[2],
-            roll_no=record[1],
-            time=record[4],
-            date=record[3],
-            student=present_student.id
-        )
-        db.session.add(attendance_record)
-        db.session.commit()
+        search_record = Attendance.query.filter_by(roll_no=record[1], date=record[3]).first()
+        if search_record is None:
+            present_student = Student.query.filter_by(roll_no=record[1]).first()
+            attendance_record = Attendance(
+                id=record[0],
+                name=record[2],
+                roll_no=record[1],
+                time=record[4],
+                date=record[3],
+                student=present_student.id
+            )
+            db.session.add(attendance_record)
+            db.session.commit()
+        else:
+            continue
 
     # sorted_attendance_file = open('sorted_attendance.csv', 'r+')
     # sorted_attendance_file.truncate(1)
