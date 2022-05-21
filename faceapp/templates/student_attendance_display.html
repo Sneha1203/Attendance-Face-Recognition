@@ -1,10 +1,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<body class="text-center">
+<section class="student-details">
     <div>
-        <table class="table table-hover table-dark" style="margin-top: 60px">
+        <h4>Name: {{ student.name }}</h4>
+        <h4>Roll Number: {{ student.roll_no }}</h4>
+        <h4>Department: {{ student.dept }}</h4>
+        <h4>Section: {{ student.section }}</h4>
+        <h4>Year: {{ student.year }}</h4>
+    </div>
+    <div>
+        <h4>Course: {{ student.course }}</h4>
+        <h4>Semester: {{ student.semester }}</h4>
+        <h4>Gender: {{ student.gender }}</h4>
+        <h4>Email Address: {{ student.email }}</h4>
+        <h4>Mobile Number: {{ student.mobile_no }}</h4>
+    </div>
+</section>
+<h4 class="days-present">Days Present: {{ student.days_present }}</h4>
+
+
+
+    <div class="text-center">
+        <table class="table" >
             <thead>
                 <tr>
                     <th scope="col">Name</th>
@@ -21,7 +39,7 @@
                 
                     {% for present in student.attendance %}
 
-                    <tr>
+                    <tr class="table-row-hover">
                         <td>{{ student.name }}</td>
                         <td>{{ student.roll_no }}</td>
                         <td>{{ present.time }}</td>
@@ -36,7 +54,7 @@
             </tbody>
         </table>
     </div>
-</body>
+
 
 
 {% endblock%}

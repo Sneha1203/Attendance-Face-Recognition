@@ -1,4 +1,8 @@
-
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 .nav-wrapper {
     width: 100%;
     position: sticky;
@@ -67,13 +71,7 @@
 }
 
 .nav-item a:hover {
-    color: #3498db; 
-}
-
-.no-search {
-    margin-top: 5px;
-    transform: translate(0);
-    transition: transform 0.7s ease-in-out;
+    color: gray; 
 }
 
 
@@ -141,4 +139,77 @@ h6 {
     font-size: 1.5rem;
 }
 
+
+.table {
+    border: 1px solid black;
+    border-collapse: collapse;
+    width: 95%;
+    margin: 60px auto;
+}
+
+.table tr{
+    border: 1px solid black;
+    border-top: 1px solid black
+}
+
+.table td{
+    border: 1px solid black;
+}
+
+thead {
+    background-color: black;
+    color: white;
+}
+
+.table-row-hover:hover {
+    background-color: #d2d4d6;
+}
+
+footer {
+    background-color: black;
+    color: white;
+    margin-top: auto;
+    padding: 15px;
+}
+
+.footer h5 {
+    margin: 15px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+.footer div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.footer a{
+    color: white;
+}
+
+.student-details {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.student-details h4 {
+    margin: 15px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    letter-spacing: 1px;
+    font-size: medium;
+}
+
+.days-present {
+    text-align: center;
+    margin: 15px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    letter-spacing: 1px;
+    font-size: medium;
+}
 
