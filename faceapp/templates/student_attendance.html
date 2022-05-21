@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<body class="text-center">
+    <div class="container">
+        <form method='POST' class="form-register" style="color:white", enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <h1 class="h3 mb-3 font-weight-normal">Register a student here</h1>
+            <br>
+            
+            {{ form.roll_no.label() }}
+            {{ form.roll_no(class="form-control", placeholder="Enter Roll Number: ") }}
+            
+            <br>
+            {{ form.submit(class="btn") }}
+
+        </form>
+    </div>
+</body>
+
+
+{% endblock%}

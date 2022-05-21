@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<body class="text-center">
+    <div>
+        <table class="table table-hover table-dark" style="margin-top: 60px">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Roll Number</th>
+                    <th scope="col">Recorded Time</th>
+                    <th scope="col">Recorded Date</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Mobile Number</th>
+                    <th scope="col">Gender</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                
+                    {% for present in student.attendance %}
+
+                    <tr>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.roll_no }}</td>
+                        <td>{{ present.time }}</td>
+                        <td>{{ present.date }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.mobile_no }}</td>
+                        <td>{{ student.gender }}</td>
+                        
+                    </tr>
+                    {% endfor %}
+              
+            </tbody>
+        </table>
+    </div>
+</body>
+
+
+{% endblock%}

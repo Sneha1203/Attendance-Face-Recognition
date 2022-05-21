@@ -1,11 +1,10 @@
-from traceback import print_stack
 from sqlalchemy import func
 from faceapp import app
 from faceapp import db
 from flask import render_template, redirect, url_for, flash, request, Response
 import face_recognition
 from faceapp.models import Attendance, User, Student
-from faceapp.forms import LoginUserForm, RegisterStudentForm, RegisterUserForm, UploadForm, FilterAttendanceForm
+from faceapp.forms import LoginUserForm, RegisterStudentForm, RegisterUserForm, StudentAttendanceForm, UploadForm, FilterAttendanceForm
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -84,6 +83,11 @@ def upload_photo():
 @login_required
 def student_details():
     students = Student.query.all()
+    for student in students:
+        roll_to_count = student.roll_no
+        no_of_present = Attendance.query.filter_by(roll_no=roll_to_count).count()
+        student.days_present = no_of_present
+        db.session.commit()
     return render_template('student_details.html', students=students)
 
 
@@ -136,8 +140,8 @@ def logout():
 #     del data
     
 
-@app.route('/filter_attendance', methods=['GET', 'POST'])
-def filter_attendance():
+@app.route('/student_attendance', methods=['GET', 'POST'])
+def student_attendance(): # earlier filter_attendance()
     # load_data()
     # file_name = 'attendance.csv'
     # colnames = ['roll_no', 'name', 'attendance_date', 'attendance_time']
@@ -182,45 +186,65 @@ def filter_attendance():
     # sorted_attendance_file.close()
 
     # get data from user through attenance form to filter the attendance
-    form = FilterAttendanceForm()
+    # form = FilterAttendanceForm()
+    # if request.method == 'POST':
+    #     if form.validate_on_submit():
+    #         dept = form.dept.data
+    #         year = form.year.data
+    #         semester = form.semester.data
+    #         teacher = form.teacher.data
+    #         course = form.course.data
+    #         section = form.section.data
+            
+    students = Student.query.all()
+    # for student in students:
+    #     roll_to_count = student.roll_no
+    #     no_of_present = Attendance.query.filter_by(roll_no=roll_to_count).count()
+    #     student.days_present = no_of_present
+    #     db.session.commit()
+    #         return redirect(url_for('attendance_details', dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section, **request.args))
+    #     if form.errors != {}:
+    #         for err_msg in form.errors.values():
+    #             flash(f'There was an error while fetching attendance details: {err_msg}',category='danger')
+
+    # return render_template('filter_attendance.html', form=form)
+
+    form = StudentAttendanceForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            dept = form.dept.data
-            year = form.year.data
-            semester = form.semester.data
-            teacher = form.teacher.data
-            course = form.course.data
-            section = form.section.data
-            
-            students = Student.query.filter_by(dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)
-
-            for student in students:
-                roll_to_count = student.roll_no
-                no_of_present = Attendance.query.filter_by(roll_no=roll_to_count).count()
-                student.days_present = no_of_present
-                db.session.commit()
-            return redirect(url_for('attendance_details', dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section, **request.args))
+            roll_to_display = form.roll_no.data
+            return redirect(url_for('student_attendance_display', roll_no=roll_to_display, **request.args))
         if form.errors != {}:
             for err_msg in form.errors.values():
-                flash(f'There was an error while fetching attendance details: {err_msg}',category='danger')
-
-    return render_template('filter_attendance.html', form=form)
-
+                flash(f'Enter a valid Roll Number: {err_msg}', category='danger')
+    return render_template('student_attendance.html', form=form)
 
 
-@app.route('/attendance_details')
-def attendance_details():
-    dept = request.args.get('dept')
-    year = request.args.get('year')
-    semester = request.args.get('semester')
-    teacher = request.args.get('teacher')
-    course = request.args.get('course')
-    section = request.args.get('section')
-    students = Student.query.filter_by(dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)
-    # roll_nos = Student.query(Student.roll_no).filter_by(dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)
-    # attendance = Attendance.query.filter_by(roll_nos).all()
-    return render_template('attendance_details.html', students=students, dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)
 
+# @app.route('/attendance_details')
+# def attendance_details():
+#     dept = request.args.get('dept')
+#     year = request.args.get('year')
+#     semester = request.args.get('semester')
+#     teacher = request.args.get('teacher')
+#     course = request.args.get('course')
+#     section = request.args.get('section')
+#     students = Student.query.filter_by(dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)
+#     # roll_nos = Student.query(Student.roll_no).filter_by(dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)
+#     # attendance = Attendance.query.filter_by(roll_nos).all()
+#     return render_template('attendance_details.html', students=students, dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)
+
+
+# @app.route('/student_attendance', methods=['GET', 'POST'])
+# def student_attendance():
+
+
+
+@app.route('/student_attendance_display')
+def student_attendance_display():
+    roll_to_display = request.args.get('roll_no')
+    student = Student.query.filter_by(roll_no=roll_to_display).first()
+    return render_template('student_attendance_display.html', student=student)
 
 def gen_frames():
     path = 'uploads'

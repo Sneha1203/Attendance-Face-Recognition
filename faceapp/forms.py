@@ -81,3 +81,8 @@ class FilterAttendanceForm(FlaskForm):
     course = SelectField(label='Course: ', validators=[DataRequired()], choices=COURSE_CHOICES)
     section = SelectField(label='Section: ', validators=[DataRequired()], choices=SECTION_CHOICES)
     submit = SubmitField(label='Filter Attendance')
+
+
+class StudentAttendanceForm(FlaskForm):
+    roll_no = IntegerField(label='Roll Number: ', validators=[DataRequired()])
+    submit = SubmitField(label='Show Attendance')
