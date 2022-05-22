@@ -1,7 +1,4 @@
-from email.policy import default
 from faceapp import bcrypt
-from flask import Flask
-import flask_sqlalchemy
 from faceapp import db, login_manager
 from flask_login import UserMixin
 
@@ -13,6 +10,11 @@ def load_user(user_id):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(length=10), unique=True, nullable=False)
+    first_name = db.Column(db.String(length=15), nullable=False)
+    last_name = db.Column(db.String(length=15), nullable=False)
+    dept = db.Column(db.String(length=10), nullable=False)
+    gender = db.Column(db.String(length=20), nullable=False)
+    mobile_no = db.Column(db.String(length=10), unique=True, nullable=False)
     email = db.Column(db.String(length=20), unique=True, nullable=False)
     password_hash = db.Column(db.String(length=60), nullable=False)
 

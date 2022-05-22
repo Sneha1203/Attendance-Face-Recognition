@@ -1,5 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
-USER PROFILE
+<h3 class="user-profile"> USER PROFILE </h3>
+<div class="user-details">
+    <p><b>NAME: </b>{{ current_user.first_name }} {{ current_user.last_name}}</p>
+    <p><b>USERNAME: </b>{{ current_user.username }}</p>
+    <p><b>DEPARTMENT: </b>{{ current_user.dept }}</p>
+    <p><b>GENDER: </b>{{ current_user.gender }}</p>
+    <p><b>MOBILE NUMBER: </b>{{ current_user.mobile_no }}</p>
+    <p><b>EMAIL ADDRESS: </b>{{ current_user.email }}</p>
+    <div class="user-profile-btn">
+        <a class="btn" href="{{ url_for('register_student') }}">Register a Student</a>
+        <a class="btn" href="{{ url_for('take_attendance') }}">Take Attendance</a>
+    </div>
+</div>
+
 {% endblock %}

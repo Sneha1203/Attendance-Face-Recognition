@@ -5,10 +5,23 @@
 <div class="container text-center">
     <form method='POST' class="'form-register" style="color:white">
         {{ form.hidden_tag() }}
-        <h1 class="h3 mb-3 font-weight-normal">Please Create Your Account</h1>
-        <br>
         {{ form.username.label() }}
         {{ form.username(class="form-control", placeholder="Enter username") }}
+        
+        {{ form.first_name.label() }}
+        {{ form.first_name(class="form-control", placeholder="Enter First Name") }}
+
+        {{ form.last_name.label() }}
+        {{ form.last_name(class="form-control", placeholder="Enter Last Name") }}
+
+        {{ form.dept.label() }}
+        {{ form.dept(class="form-control", placeholder="Enter Department") }}
+        
+        {{ form.gender.label() }}
+        {{ form.gender(class="form-control", placeholder="Enter Gender") }}
+        
+        {{ form.mobile_no.label() }}
+        {{ form.mobile_no(class="form-control", placeholder="Enter Mobile Number") }}
 
         {{ form.email.label() }}
         {{ form.email(class="form-control", placeholder="Enter email") }}
