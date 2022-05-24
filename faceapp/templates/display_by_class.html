@@ -2,6 +2,8 @@
 
 {% block content%}
 
+
+
 <div class="text-center class-details">
     <p><b>DEPARTMENT: </b>{{ dept }} </p>
     <p><b>YEAR: </b>{{ year }} </p>
@@ -9,6 +11,12 @@
     <p><b>TEACHER: </b>{{ teacher }} </p>
     <p><b>COURSE: </b>{{ course }} </p>
     <p><b>SECTION: </b>{{ section }} </p>
+
+    <form method='POST' class="'form-signin" novalidate>
+        {{ form.hidden_tag() }}
+        {{ form.submit(class="btn") }}
+    </form>
+    
 </div>
     <div class="text-center">
         <table class="table">

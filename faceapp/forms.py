@@ -87,3 +87,13 @@ class DisplayByClassForm(FlaskForm):
     section = SelectField(label='Section: ', validators=[DataRequired()], choices=SECTION_CHOICES)
     date = StringField(label='Date: ', validators=[Length(min=2, max=20),DataRequired()])
     submit = SubmitField(label='Show Attendance')
+
+
+# form to download attendance records of a student as csv file
+class StudentAttendanceCSVForm(FlaskForm):
+    submit = SubmitField(label='Download Attendance')
+
+
+# form to download attendance records of a class as csv file
+class ClassAttendanceCSVForm(FlaskForm):
+    submit = SubmitField(label='Download Attendance')

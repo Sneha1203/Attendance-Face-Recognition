@@ -1,10 +1,9 @@
-from select import select
 from faceapp import app
 from faceapp import db
-from flask import render_template, redirect, url_for, flash, request, Response
+from flask import make_response, render_template, redirect, url_for, flash, request, Response
 import face_recognition
 from faceapp.models import Attendance, User, Student
-from faceapp.forms import LoginUserForm, RegisterStudentForm, RegisterUserForm, DisplayByRollForm, DisplayByClassForm, UploadForm
+from faceapp.forms import LoginUserForm, RegisterStudentForm, RegisterUserForm, DisplayByRollForm, DisplayByClassForm, UploadForm, StudentAttendanceCSVForm, ClassAttendanceCSVForm
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime
 import os 
@@ -179,11 +178,32 @@ def enter_roll():
 
 
 # all attendance is displayed for a particular student
-@app.route('/display_by_roll')
+@app.route('/display_by_roll', methods=['GET', 'POST'])
 def display_by_roll():
+    form = StudentAttendanceCSVForm()
     roll_to_display = request.args.get('roll_no')
-    student = Student.query.filter_by(roll_no=roll_to_display).first()
-    return render_template('display_by_roll.html', student=student)
+    result = Student.query.filter_by(roll_no=roll_to_display).first()
+    name=result.name
+    dept=result.dept
+    section=result.section
+    year=result.year
+    course=result.course
+    semester=result.semester
+    gender=result.gender
+    email=result.email
+    mobile_no=result.mobile_no
+    days_present=result.days_present
+    student = db.session.query(Student.name, Student.roll_no, Attendance.time, Attendance.date, Student.email, Student.mobile_no, Student.gender, Student.dept, Student.course, Student.section, Student.semester, Student.year, Student.teacher).join(Attendance, Student.roll_no == Attendance.roll_no).filter(Attendance.roll_no==roll_to_display, Student.roll_no==roll_to_display).all()
+
+
+    if form.validate_on_submit():
+            file_name = roll_to_display + "_" + name + "_" + dept + ".csv"
+            csv_data = pd.DataFrame(student, columns=['Name', 'Roll No.', 'Recorded Time', 'Recorded Date', 'Email', 'Mobile No.', 'Gender', 'Department', 'Course', 'Section', 'Semester', 'Year', 'Teacher'])
+            resp = make_response(csv_data.to_csv(index=False))
+            resp.headers["Content-Disposition"] = "attachment; filename={}".format(file_name)
+            resp.headers["Content-type"] = "text/csv"
+            return resp
+    return render_template('display_by_roll.html', student=student, form=form, name=name, roll_no=roll_to_display, dept=dept, section=section, year=year, course=course, semester=semester, gender=gender, email=email, mobile_no=mobile_no, days_present=days_present)
 
 
 # the user is asked to enter a class for displaying attendance 
@@ -208,8 +228,9 @@ def enter_class():
 
 
 # all attendance is displayed for a particular class
-@app.route('/display_by_class')
+@app.route('/display_by_class', methods=['GET', 'POST'])
 def display_by_class():
+    form = ClassAttendanceCSVForm()
     dept = request.args.get('dept')
     year = request.args.get('year')
     semester = request.args.get('semester')
@@ -224,8 +245,17 @@ def display_by_class():
     # students = Attendance.query.join(Student, Attendance.roll_no==Student.roll_no).filter(Attendance.date==date, Student.dept==dept).all()
     # result = Student.query.join(Attendance, Attendance.roll_no==Student.roll_no, Attendance.date==date)
     # students = select(Student).select_from(result).all()
-    students = db.session.query(Student.name, Student.roll_no, Attendance.time, Attendance.date, Student.email, Student.mobile_no, Student.gender).join(Attendance, Student.roll_no == Attendance.roll_no).filter(Attendance.date==date, Student.dept==dept, Student.year==year, Student.semester==semester, Student.teacher==teacher, Student.course==course, Student.section==section).all()
-    return render_template('display_by_class.html', students=students, dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section, date=date)
+    students = db.session.query(Student.name, Student.roll_no, Attendance.time, Attendance.date, Student.email, Student.mobile_no, Student.gender, Student.dept, Student.course, Student.section, Student.semester, Student.year, Student.teacher).join(Attendance, Student.roll_no == Attendance.roll_no).filter(Attendance.date==date, Student.dept==dept, Student.year==year, Student.semester==semester, Student.teacher==teacher, Student.course==course, Student.section==section).all()
+
+   
+    if form.validate_on_submit():
+        file_name = teacher + "_" + section + "_" + course + ".csv"
+        csv_data = pd.DataFrame(students, columns=['Name', 'Roll No.', 'Recorded Time', 'Recorded Date', 'Email', 'Mobile No.', 'Gender', 'Department', 'Course', 'Section', 'Semester', 'Year', 'Teacher'])
+        resp = make_response(csv_data.to_csv(index=False))
+        resp.headers["Content-Disposition"] = "attachment; filename={}".format(file_name)
+        resp.headers["Content-type"] = "text/csv"
+        return resp
+    return render_template('display_by_class.html', students=students, dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section, date=date, form=form)
 
 
 def gen_frames():

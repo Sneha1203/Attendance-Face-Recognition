@@ -3,21 +3,25 @@
 {% block content %}
 <section class="student-details">
     <div>
-        <h4><b>Name: </b>{{ student.name }}</h4>
-        <h4><b>Roll Number: </b>{{ student.roll_no }}</h4>
-        <h4><b>Department: </b>{{ student.dept }}</h4>
-        <h4><b>Section: </b>{{ student.section }}</h4>
-        <h4><b>Year: </b>{{ student.year }}</h4>
+        <h4><b>Name: </b>{{ name }}</h4>
+        <h4><b>Roll Number: </b>{{ roll_no }}</h4>
+        <h4><b>Department: </b>{{ dept }}</h4>
+        <h4><b>Section: </b>{{ section }}</h4>
+        <h4><b>Year: </b>{{ year }}</h4>
     </div>
     <div>
-        <h4><b>Course: </b>{{ student.course }}</h4>
-        <h4><b>Semester: </b>{{ student.semester }}</h4>
-        <h4><b>Gender: </b>{{ student.gender }}</h4>
-        <h4><b>Email Address: </b>{{ student.email }}</h4>
-        <h4><b>Mobile Number: </b>{{ student.mobile_no }}</h4>
+        <h4><b>Course: </b>{{ course }}</h4>
+        <h4><b>Semester: </b>{{ semester }}</h4>
+        <h4><b>Gender: </b>{{ gender }}</h4>
+        <h4><b>Email Address: </b>{{ email }}</h4>
+        <h4><b>Mobile Number: </b>{{ mobile_no }}</h4>
     </div>
 </section>
-<h4 class="days-present"><b>Days Present: </b>{{ student.days_present }}</h4>
+<h4 class="days-present"><b>Days Present: </b>{{ days_present }}</h4>
+<form method='POST' class="'form-signin text-center" novalidate>
+    {{ form.hidden_tag() }}
+    {{ form.submit(class="btn") }}
+</form>
 
 
 
@@ -37,16 +41,16 @@
 
             <tbody>
                 
-                    {% for present in student.attendance %}
+                    {% for record in student %}
 
                     <tr class="table-row-hover">
-                        <td>{{ student.name }}</td>
-                        <td>{{ student.roll_no }}</td>
-                        <td>{{ present.time }}</td>
-                        <td>{{ present.date }}</td>
-                        <td>{{ student.email }}</td>
-                        <td>{{ student.mobile_no }}</td>
-                        <td>{{ student.gender }}</td>
+                        <td>{{ record.name }}</td>
+                        <td>{{ record.roll_no }}</td>
+                        <td>{{ record.time }}</td>
+                        <td>{{ record.date }}</td>
+                        <td>{{ record.email }}</td>
+                        <td>{{ record.mobile_no }}</td>
+                        <td>{{ record.gender }}</td>
                         
                     </tr>
                     {% endfor %}
