@@ -1,9 +1,10 @@
+from select import select
 from faceapp import app
 from faceapp import db
 from flask import render_template, redirect, url_for, flash, request, Response
 import face_recognition
 from faceapp.models import Attendance, User, Student
-from faceapp.forms import LoginUserForm, RegisterStudentForm, RegisterUserForm, StudentAttendanceForm, UploadForm
+from faceapp.forms import LoginUserForm, RegisterStudentForm, RegisterUserForm, DisplayByRollForm, DisplayByClassForm, UploadForm
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime
 import os 
@@ -17,6 +18,45 @@ import pandas as pd
 @app.route('/home')
 def home():
     return render_template('home.html')
+
+
+# login user
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginUserForm()
+    if form.validate_on_submit():
+        attempted_user = User.query.filter_by(username=form.username.data).first()
+        if attempted_user and attempted_user.check_password(attempted_password=form.password.data):
+            login_user(attempted_user)
+            flash(f'Welcome {attempted_user}! You have logged in successfully!', category='success')
+            return redirect(url_for('profile'))
+        else:
+            flash(f'Username and password do not match! Please try again!', category='danger')
+    return render_template('login.html', form=form)
+
+
+# register user
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterUserForm()
+    if form.validate_on_submit():
+        create_user = User(username=form.username.data,
+                            first_name=form.first_name.data,
+                            last_name=form.last_name.data,
+                            dept=form.dept.data,
+                            gender=form.gender.data,
+                            mobile_no=form.mobile_no.data,
+                            email=form.email.data,
+                            password=form.password1.data)
+        db.session.add(create_user)
+        db.session.commit()
+        login_user(create_user)
+        flash(f'Account created successfully! You are logged in as {create_user.username}!', category='success')
+        return redirect(url_for('profile'))
+    if form.errors != {}:
+        for err_msg in form.errors.values():
+            flash(f'There was an error with creating user: {err_msg}', category='danger')
+    return render_template('register.html', form=form)
 
 
 # route for showing the current user's profile page
@@ -92,57 +132,10 @@ def student_details():
     return render_template('student_details.html', students=students)
 
 
-# login user
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginUserForm()
-    if form.validate_on_submit():
-        attempted_user = User.query.filter_by(username=form.username.data).first()
-        if attempted_user and attempted_user.check_password(attempted_password=form.password.data):
-            login_user(attempted_user)
-            flash(f'Welcome {attempted_user}! You have logged in successfully!', category='success')
-            return redirect(url_for('profile'))
-        else:
-            flash(f'Username and password do not match! Please try again!', category='danger')
-    return render_template('login.html', form=form)
-
-
-# register user
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegisterUserForm()
-    if form.validate_on_submit():
-        create_user = User(username=form.username.data,
-                            first_name=form.first_name.data,
-                            last_name=form.last_name.data,
-                            dept=form.dept.data,
-                            gender=form.gender.data,
-                            mobile_no=form.mobile_no.data,
-                            email=form.email.data,
-                            password=form.password1.data)
-        db.session.add(create_user)
-        db.session.commit()
-        login_user(create_user)
-        flash(f'Account created successfully! You are logged in as {create_user.username}!', category='success')
-        return redirect(url_for('profile'))
-    if form.errors != {}:
-        for err_msg in form.errors.values():
-            flash(f'There was an error with creating user: {err_msg}', category='danger')
-    return render_template('register.html', form=form)
-
-
-# logout
-@app.route('/logout')
-def logout():
-    logout_user()
-    flash(f'You have logged out successfully!', category='info')
-    return redirect(url_for('home'))
- 
-
 # student attendance page
 # the data from csv is collected and stored in the database
-@app.route('/student_attendance', methods=['GET', 'POST'])
-def student_attendance():   
+@app.route('/attendance_details')
+def attendance_details():   
     file_name = 'attendance.csv'
     colnames = ['roll_no', 'name', 'attendance_date', 'attendance_time']
     data = pd.read_csv(file_name, names=colnames, skiprows=1)
@@ -167,27 +160,72 @@ def student_attendance():
             db.session.commit()
         else:
             continue
+    return render_template('attendance_details.html')
 
-    # the user is asked to enter roll number of the student for displaying attendance 
-    # attendance is displayed for that student for all the days he was present
-    form = StudentAttendanceForm()
+
+# the user is asked to enter roll number of the student for displaying attendance 
+ # attendance is displayed for that student for all the days he was present
+@app.route('/enter_roll', methods=['GET', 'POST'])
+def enter_roll():
+    form = DisplayByRollForm()
     if request.method == 'POST':
         if form.validate_on_submit():
             roll_to_display = form.roll_no.data
-            return redirect(url_for('student_attendance_display', roll_no=roll_to_display, **request.args))
+            return redirect(url_for('display_by_roll', roll_no=roll_to_display, **request.args))
         if form.errors != {}:
             for err_msg in form.errors.values():
                 flash(f'Enter a valid Roll Number: {err_msg}', category='danger')
-    return render_template('student_attendance.html', form=form)
+    return render_template('enter_roll.html', form=form)
 
 
 # all attendance is displayed for a particular student
-@app.route('/student_attendance_display')
-def student_attendance_display():
+@app.route('/display_by_roll')
+def display_by_roll():
     roll_to_display = request.args.get('roll_no')
     student = Student.query.filter_by(roll_no=roll_to_display).first()
-    return render_template('student_attendance_display.html', student=student)
+    return render_template('display_by_roll.html', student=student)
 
+
+# the user is asked to enter a class for displaying attendance 
+# attendance is displayed for that class
+@app.route('/enter_class', methods=['GET', 'POST'])
+def enter_class():
+    form = DisplayByClassForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            dept = form.dept.data
+            year = form.year.data
+            semester = form.semester.data
+            teacher = form.teacher.data
+            course = form.course.data
+            section = form.section.data
+            date = form.date.data
+            return redirect(url_for('display_by_class', dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section, date=date, **request.args))
+        if form.errors != {}:
+            for err_msg in form.errors.values():
+                flash(f'There was an error while fetching attendance details: {err_msg}',category='danger')
+    return render_template('enter_class.html', form=form)
+
+
+# all attendance is displayed for a particular class
+@app.route('/display_by_class')
+def display_by_class():
+    dept = request.args.get('dept')
+    year = request.args.get('year')
+    semester = request.args.get('semester')
+    teacher = request.args.get('teacher')
+    course = request.args.get('course')
+    section = request.args.get('section')
+    date = request.args.get('date')
+    # attendance = Attendance.query.filter_by(date=date).all()
+    # students = Student.query.filter_by(dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)  #works
+    # attendance = Student.query.join(Attendance.student).filter_by(dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section, date=date).all()
+    # students = db.session.query(Student).filter(Student.dept==dept, Student.year==year, Student.semester==semester, Student.teacher==teacher, Student.course==course, Student.section==section).join(Attendance).filter(Attendance.roll_no==Student.roll_no, Attendance.date==date).all()
+    # students = Attendance.query.join(Student, Attendance.roll_no==Student.roll_no).filter(Attendance.date==date, Student.dept==dept).all()
+    # result = Student.query.join(Attendance, Attendance.roll_no==Student.roll_no, Attendance.date==date)
+    # students = select(Student).select_from(result).all()
+    students = db.session.query(Student.name, Student.roll_no, Attendance.time, Attendance.date, Student.email, Student.mobile_no, Student.gender).join(Attendance, Student.roll_no == Attendance.roll_no).filter(Attendance.date==date, Student.dept==dept, Student.year==year, Student.semester==semester, Student.teacher==teacher, Student.course==course, Student.section==section).all()
+    return render_template('display_by_class.html', students=students, dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section, date=date)
 
 
 def gen_frames():
@@ -267,4 +305,12 @@ def gen_frames():
 def take_attendance():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
+# logout
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash(f'You have logged out successfully!', category='info')
+    return redirect(url_for('home'))
+ 
 

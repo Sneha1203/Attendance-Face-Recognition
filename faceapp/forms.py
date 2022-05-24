@@ -1,3 +1,4 @@
+from flask import Flask
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerField, SelectField
 from wtforms.validators import Length, EqualTo, Email, DataRequired, ValidationError
@@ -71,6 +72,18 @@ class UploadForm(FlaskForm):
 
 
 # form for displaying the attendance of a particular student
-class StudentAttendanceForm(FlaskForm):
+class DisplayByRollForm(FlaskForm):
     roll_no = IntegerField(label='Roll Number: ', validators=[DataRequired()])
+    submit = SubmitField(label='Show Attendance')
+
+
+# form for displaying the attendance of a class
+class DisplayByClassForm(FlaskForm):
+    year = SelectField(label='Year: ', validators=[DataRequired()], choices=YEAR_CHOICES)
+    dept = SelectField(label='Department: ', validators=[DataRequired()], choices=DEPT_CHOICES)
+    semester = SelectField(label='Semester: ', validators=[DataRequired()], choices=SEMESTER_CHOICES)
+    teacher = StringField(label='Teacher: ', validators=[Length(min=2, max=20),DataRequired()])
+    course = SelectField(label='Course: ', validators=[DataRequired()], choices=COURSE_CHOICES)
+    section = SelectField(label='Section: ', validators=[DataRequired()], choices=SECTION_CHOICES)
+    date = StringField(label='Date: ', validators=[Length(min=2, max=20),DataRequired()])
     submit = SubmitField(label='Show Attendance')

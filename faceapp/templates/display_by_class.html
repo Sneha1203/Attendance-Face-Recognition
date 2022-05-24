@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content%}
+
+<div class="text-center class-details">
+    <p><b>DEPARTMENT: </b>{{ dept }} </p>
+    <p><b>YEAR: </b>{{ year }} </p>
+    <p><b>SEMESTER: </b>{{ semester }} </p>
+    <p><b>TEACHER: </b>{{ teacher }} </p>
+    <p><b>COURSE: </b>{{ course }} </p>
+    <p><b>SECTION: </b>{{ section }} </p>
+</div>
+    <div class="text-center">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Roll Number</th>
+                    <th scope="col">Recorded Time</th>
+                    <th scope="col">Recorded Date</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Mobile Number</th>
+                    <th scope="col">Gender</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for student in students %}
+                    
+                            <tr class="table-row-hover">
+                                <td>{{ student.name }}</td>
+                                <td>{{ student.roll_no }}</td>
+                                <td>{{ student.time }}</td>
+                                <td>{{ student.date }}</td>
+                                <td>{{ student.email }}</td>
+                                <td>{{ student.mobile_no }}</td>
+                                <td>{{ student.gender }}</td>
+                                
+                            </tr>
+                        
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+
+{% endblock%}
+           

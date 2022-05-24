@@ -240,3 +240,10 @@ footer {
 }
 
 
+.class-details {
+    margin: 15px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    letter-spacing: 1px;
+    font-size: medium;
+}
