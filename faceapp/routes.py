@@ -82,10 +82,14 @@ def register_student():
                                     mobile_no=form.mobile_no.data,
                                     email=form.email.data,
                                     teacher=form.teacher.data)
-            db.session.add(create_student)
-            db.session.commit()
-            flash(f'Student has been registered succesfully!', category='success')
-            return redirect(url_for('upload_photo'))    # after registering, the user is asked to upload the photo of the student 
+            search_student = Student.query.filter_by(roll_no=create_student.roll_no).first()
+            if search_student:
+                flash(f'Roll number already exists! Try another one', category='danger')
+            else:
+                db.session.add(create_student)
+                db.session.commit()
+                flash(f'Student has been registered succesfully!', category='success')
+                return redirect(url_for('upload_photo'))    # after registering, the user is asked to upload the photo of the student 
         if form.errors != {}:
             for err_msg in form.errors.values():
                 flash(f'There was an error with registering the student: {err_msg}',category='danger')
@@ -316,8 +320,8 @@ def gen_frames():
                             y1, x2, y2, x1 = face_loc
                             y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
                             cv2.rectangle (img, (x1, y1), (x2, y2), (128, 0, 128), 2)
-                            cv2.putText(img, f'ROLL NO: {roll}', (x1+6, y2+30), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 0), 2)      # displays roll number of recognized student
-                            cv2.putText(img, f'NAME: {name}', (x1+12, y2+60), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 0), 2)        # displays name of recognized student
+                            cv2.putText(img, f'ROLL NO: {roll}', (x1+6, y2+30), cv2.FONT_HERSHEY_COMPLEX, 1, (128, 0, 128), 2)      # displays roll number of recognized student
+                            cv2.putText(img, f'NAME: {name}', (x1+12, y2+60), cv2.FONT_HERSHEY_COMPLEX, 1, (128, 0, 128), 2)        # displays name of recognized student
                             mark_attendance(roll, name)     # records attendance for the recognized student in the csv file
 
 
