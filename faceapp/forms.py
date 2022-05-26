@@ -7,9 +7,8 @@ from faceapp.models import User, Student
 
 # choices for SelectField for department, course, year, semester, section and gender
 DEPT_CHOICES =['Select Department: ', 'CSE', 'IT']
-COURSE_CHOICES = ['Select Course: ', 'BE', 'FE', 'TE']
-YEAR_CHOICES = ['Select Year: ', '2020-21', '2021-22', '2022-23', '2023-24']
-SEMESTER_CHOICES = ['Select Semester: ', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII']
+COURSE_CHOICES = ['Select Course: ', 'BE', 'TE']
+YEAR_CHOICES = ['Select Year: ', '2020-24', '2021-25']
 SECTION_CHOICES = ['Select Section: ', 'CSE-1', 'CSE-2', 'IT-1', 'IT-2']
 GENDER_CHOICES = ['Select Gender: ', 'Male', 'Female', 'Other', 'Prefer not to say']
 
@@ -53,7 +52,6 @@ class RegisterStudentForm(FlaskForm):
     dept = SelectField(label='Department: ', validators=[DataRequired()], choices=DEPT_CHOICES)
     course = SelectField(label='Course: ', validators=[DataRequired()], choices=COURSE_CHOICES)
     year = SelectField(label='Year: ', validators=[DataRequired()], choices=YEAR_CHOICES)
-    semester = SelectField(label='Semester: ', validators=[DataRequired()], choices=SEMESTER_CHOICES)
     name = StringField(label='Student Name: ', validators=[Length(max=30),DataRequired()])
     section = SelectField(label='Section: ', validators=[DataRequired()], choices=SECTION_CHOICES)
     roll_no = IntegerField(label='Roll Number: ', validators=[DataRequired()])
@@ -81,7 +79,6 @@ class DisplayByRollForm(FlaskForm):
 class DisplayByClassForm(FlaskForm):
     year = SelectField(label='Year: ', validators=[DataRequired()], choices=YEAR_CHOICES)
     dept = SelectField(label='Department: ', validators=[DataRequired()], choices=DEPT_CHOICES)
-    semester = SelectField(label='Semester: ', validators=[DataRequired()], choices=SEMESTER_CHOICES)
     teacher = StringField(label='Teacher: ', validators=[Length(min=2, max=20),DataRequired()])
     course = SelectField(label='Course: ', validators=[DataRequired()], choices=COURSE_CHOICES)
     section = SelectField(label='Section: ', validators=[DataRequired()], choices=SECTION_CHOICES)

@@ -5,19 +5,19 @@
     <div>
         <h4><b>Name: </b>{{ name }}</h4>
         <h4><b>Roll Number: </b>{{ roll_no }}</h4>
-        <h4><b>Department: </b>{{ dept }}</h4>
         <h4><b>Section: </b>{{ section }}</h4>
         <h4><b>Year: </b>{{ year }}</h4>
+        <h4><b>Days Present: </b>{{ days_present }}</h4>
     </div>
     <div>
+        <h4><b>Department: </b>{{ dept }}</h4>
         <h4><b>Course: </b>{{ course }}</h4>
-        <h4><b>Semester: </b>{{ semester }}</h4>
         <h4><b>Gender: </b>{{ gender }}</h4>
         <h4><b>Email Address: </b>{{ email }}</h4>
         <h4><b>Mobile Number: </b>{{ mobile_no }}</h4>
     </div>
 </section>
-<h4 class="days-present"><b>Days Present: </b>{{ days_present }}</h4>
+
 <form method='POST' class="'form-signin text-center" novalidate>
     {{ form.hidden_tag() }}
     {{ form.submit(class="btn") }}

@@ -75,7 +75,6 @@ def register_student():
             create_student = Student(dept=form.dept.data,
                                     course=form.course.data,
                                     year=form.year.data,
-                                    semester=form.semester.data,
                                     name=form.name.data,
                                     section=form.section.data,
                                     roll_no=form.roll_no.data,
@@ -118,23 +117,8 @@ def upload_photo():
     return render_template('upload_photo.html', form=form)
 
 
-# displays details of all the registered students with the number of days each student was present
-@app.route('/student_details', methods=['GET', 'POST'])
-@login_required
-def student_details():
-    students = Student.query.order_by(Student.roll_no).all()
-    for student in students:
-        roll_to_count = student.roll_no
-        no_of_present = Attendance.query.filter_by(roll_no=roll_to_count).count()
-        student.days_present = no_of_present
-        db.session.commit()
-    return render_template('student_details.html', students=students)
-
-
-# student attendance page
-# the data from csv is collected and stored in the database
-@app.route('/attendance_details')
-def attendance_details():   
+# reads the data from the csv and updates the records in the database
+def update_attendance():
     file_name = 'attendance.csv'
     colnames = ['roll_no', 'name', 'attendance_date', 'attendance_time']
     data = pd.read_csv(file_name, names=colnames, skiprows=1)
@@ -159,6 +143,29 @@ def attendance_details():
             db.session.commit()
         else:
             continue
+
+
+# displays details of all the registered students with the number of days each student was present
+@app.route('/student_details', methods=['GET', 'POST'])
+@login_required
+def student_details():
+    update_attendance()
+    students = Student.query.order_by(Student.roll_no).all()
+    for student in students:
+        roll_to_count = student.roll_no
+        no_of_present = Attendance.query.filter_by(roll_no=roll_to_count).count()
+        student.days_present = no_of_present
+        db.session.commit()
+    return render_template('student_details.html', students=students)
+
+
+
+# the user is asked for two choices here :-
+# 1. to show attendance of one student
+# 2. to show attendance of one class
+@app.route('/attendance_details')
+def attendance_details(): 
+    update_attendance()  
     return render_template('attendance_details.html')
 
 
@@ -188,22 +195,21 @@ def display_by_roll():
     section=result.section
     year=result.year
     course=result.course
-    semester=result.semester
     gender=result.gender
     email=result.email
     mobile_no=result.mobile_no
     days_present=result.days_present
-    student = db.session.query(Student.name, Student.roll_no, Attendance.time, Attendance.date, Student.email, Student.mobile_no, Student.gender, Student.dept, Student.course, Student.section, Student.semester, Student.year, Student.teacher).join(Attendance, Student.roll_no == Attendance.roll_no).filter(Attendance.roll_no==roll_to_display, Student.roll_no==roll_to_display).all()
+    student = db.session.query(Student.name, Student.roll_no, Attendance.time, Attendance.date, Student.email, Student.mobile_no, Student.gender, Student.dept, Student.course, Student.section, Student.year, Student.teacher).join(Attendance, Student.roll_no == Attendance.roll_no).filter(Attendance.roll_no==roll_to_display, Student.roll_no==roll_to_display).all()
 
 
     if form.validate_on_submit():
             file_name = roll_to_display + "_" + name + "_" + dept + ".csv"
-            csv_data = pd.DataFrame(student, columns=['Name', 'Roll No.', 'Recorded Time', 'Recorded Date', 'Email', 'Mobile No.', 'Gender', 'Department', 'Course', 'Section', 'Semester', 'Year', 'Teacher'])
+            csv_data = pd.DataFrame(student, columns=['Name', 'Roll No.', 'Recorded Time', 'Recorded Date', 'Email', 'Mobile No.', 'Gender', 'Department', 'Course', 'Section', 'Year', 'Teacher'])
             resp = make_response(csv_data.to_csv(index=False))
             resp.headers["Content-Disposition"] = "attachment; filename={}".format(file_name)
             resp.headers["Content-type"] = "text/csv"
             return resp
-    return render_template('display_by_roll.html', student=student, form=form, name=name, roll_no=roll_to_display, dept=dept, section=section, year=year, course=course, semester=semester, gender=gender, email=email, mobile_no=mobile_no, days_present=days_present)
+    return render_template('display_by_roll.html', student=student, form=form, name=name, roll_no=roll_to_display, dept=dept, section=section, year=year, course=course, gender=gender, email=email, mobile_no=mobile_no, days_present=days_present)
 
 
 # the user is asked to enter a class for displaying attendance 
@@ -215,12 +221,11 @@ def enter_class():
         if form.validate_on_submit():
             dept = form.dept.data
             year = form.year.data
-            semester = form.semester.data
             teacher = form.teacher.data
             course = form.course.data
             section = form.section.data
             date = form.date.data
-            return redirect(url_for('display_by_class', dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section, date=date, **request.args))
+            return redirect(url_for('display_by_class', dept=dept, year=year, teacher=teacher, course=course, section=section, date=date, **request.args))
         if form.errors != {}:
             for err_msg in form.errors.values():
                 flash(f'There was an error while fetching attendance details: {err_msg}',category='danger')
@@ -233,29 +238,21 @@ def display_by_class():
     form = ClassAttendanceCSVForm()
     dept = request.args.get('dept')
     year = request.args.get('year')
-    semester = request.args.get('semester')
     teacher = request.args.get('teacher')
     course = request.args.get('course')
     section = request.args.get('section')
     date = request.args.get('date')
-    # attendance = Attendance.query.filter_by(date=date).all()
-    # students = Student.query.filter_by(dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section)  #works
-    # attendance = Student.query.join(Attendance.student).filter_by(dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section, date=date).all()
-    # students = db.session.query(Student).filter(Student.dept==dept, Student.year==year, Student.semester==semester, Student.teacher==teacher, Student.course==course, Student.section==section).join(Attendance).filter(Attendance.roll_no==Student.roll_no, Attendance.date==date).all()
-    # students = Attendance.query.join(Student, Attendance.roll_no==Student.roll_no).filter(Attendance.date==date, Student.dept==dept).all()
-    # result = Student.query.join(Attendance, Attendance.roll_no==Student.roll_no, Attendance.date==date)
-    # students = select(Student).select_from(result).all()
-    students = db.session.query(Student.name, Student.roll_no, Attendance.time, Attendance.date, Student.email, Student.mobile_no, Student.gender, Student.dept, Student.course, Student.section, Student.semester, Student.year, Student.teacher).join(Attendance, Student.roll_no == Attendance.roll_no).filter(Attendance.date==date, Student.dept==dept, Student.year==year, Student.semester==semester, Student.teacher==teacher, Student.course==course, Student.section==section).all()
+    students = db.session.query(Student.name, Student.roll_no, Attendance.time, Attendance.date, Student.email, Student.mobile_no, Student.gender, Student.dept, Student.course, Student.section, Student.year, Student.teacher).join(Attendance, Student.roll_no == Attendance.roll_no).filter(Attendance.date==date, Student.dept==dept, Student.year==year, Student.teacher==teacher, Student.course==course, Student.section==section).order_by(Student.roll_no).all()
 
    
     if form.validate_on_submit():
-        file_name = teacher + "_" + section + "_" + course + ".csv"
-        csv_data = pd.DataFrame(students, columns=['Name', 'Roll No.', 'Recorded Time', 'Recorded Date', 'Email', 'Mobile No.', 'Gender', 'Department', 'Course', 'Section', 'Semester', 'Year', 'Teacher'])
+        file_name = teacher + "_" + section + "_" + course + "_" + year + ".csv"
+        csv_data = pd.DataFrame(students, columns=['Name', 'Roll No.', 'Recorded Time', 'Recorded Date', 'Email', 'Mobile No.', 'Gender', 'Department', 'Course', 'Section', 'Year', 'Teacher'])
         resp = make_response(csv_data.to_csv(index=False))
         resp.headers["Content-Disposition"] = "attachment; filename={}".format(file_name)
         resp.headers["Content-type"] = "text/csv"
         return resp
-    return render_template('display_by_class.html', students=students, dept=dept, year=year, semester=semester, teacher=teacher, course=course, section=section, date=date, form=form)
+    return render_template('display_by_class.html', students=students, dept=dept, year=year, teacher=teacher, course=course, section=section, date=date, form=form)
 
 
 def gen_frames():

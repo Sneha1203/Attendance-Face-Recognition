@@ -64,10 +64,6 @@ body {
     color: gray; 
 }
 
-.navbar .icon {
-    display: none;
-}
-
 .main-section {
     padding-top: 40px;
     padding-bottom: 5px;
@@ -247,3 +243,4 @@ footer {
     letter-spacing: 1px;
     font-size: medium;
 }
+

@@ -40,7 +40,6 @@ class Student(db.Model):
     dept = db.Column(db.String(length=10), nullable=False)
     course = db.Column(db.String(length=10), nullable=False)
     year = db.Column(db.String(length=20), nullable=False)
-    semester = db.Column(db.Integer(), nullable=False)
     name = db.Column(db.String(length=30), nullable=False)
     section = db.Column(db.String(length=10), nullable=False)
     roll_no = db.Column(db.Integer(), unique=True, nullable=False)
