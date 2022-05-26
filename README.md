@@ -167,6 +167,9 @@ or you can simply execute
   pip install -r requirements.txt       # for pip
 ```
 
+If installing cmake or dlib possess any problem, you can refer to this video:
+https://youtu.be/mu05Bjniaog
+
 
 After installing the dependencies, start the server by executing
 ```bash
