@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for ('static', filename='css/styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abel&family=Raleway:wght@100;200;300;400;500;700&display=swap" rel="stylesheet">
+    <title>RECOGNITO</title>
+  </head>
+<body>
+    <h1 class="recognito" ><a href="{{ url_for ('home') }}">RECOGNITO</a></h1>
+    <section class="intro">
+
+        <p>Recognito  is a web-based attendance tracking system that uses facial 
+        recognition to take attendance.</p>
+
+        <p>When the students come in front of the camera, their face is matched 
+        with their photos uploaded by the teachers. Their attendance is marked and 
+        stored in the database once their face is recognized.</p>
+
+        <p>The date and time of attendance are recorded and stored in the database.
+        The teacher can also download the attendance records of a student or a class as
+        an excel sheet.</p>
+
+    </section>
+    <section class="sys-req">
+    <h4 id="system-requirements">System Requirements</h4>
+
+    <p>Make sure that the website has the permission to access the camera and the
+    camera is not being accessed by some other websites.</p>
+    </section>
+
+    <h2 id="structure">STRUCTURE</h2>
+
+    <p><code>/</code> or <code>/home</code> : Home page for RECOGNITO.</p>
+    <p><img src="https://user-images.githubusercontent.com/78474043/170526300-6e87b063-5897-4417-a2bb-0f88c8feebbe.jpg" class="image" alt="home-page"></p>
+
+    <p><code>/login</code> : A teacher can login himself/herself on the website. </p>
+    <p><img src="https://user-images.githubusercontent.com/78474043/170526593-cbb91784-3b3a-4106-82ec-e37931321005.jpg" class="image" alt="login-user-page"></p>
+
+    <p><code>/register</code> : A teacher can register himself/herself on the website. </p>
+    <p><img src="https://user-images.githubusercontent.com/78474043/170526629-6c0dc881-e504-4625-84ad-18ed4ec231b3.jpg" class="image" alt="register-user-page"></p>
+
+    <p><code>/profile</code> : Displays the profile of the teacher (or user). </p>
+    <p><img src="https://user-images.githubusercontent.com/78474043/170526640-afe38d20-735f-47ca-acb5-9d93041f8875.jpg" class="image" alt="user-profile-page"></p>
+
+    <p><code>/register_student</code> : After logging in, the teacher can register students 
+    for his/her class. </p>
+    <p><img src="https://user-images.githubusercontent.com/78474043/170526628-c98d9b96-7bfc-489d-9916-6eaf6cf126a1.jpg" class="image" alt="register-student-page"></p>
+
+    <p><code>/upload_photo</code> : While registering a student, a teacher has to upload the 
+    picture of the student for sample. </p>
+    <p><img src="https://user-images.githubusercontent.com/78474043/170526638-c53ab65d-fa07-4719-95c4-c08848b3461c.jpg" class="image" alt="upload-photo-page"></p>
+
+    <p><code>/take_attendance</code> : Attendance for the student is taken via the camera and 
+    stored in the csv file. Faces are recognized on the basis of photos of the 
+    students uploaded by the teacher while registering the student.
+    From the csv file, the attendance records are then stored in the database. </p>
+    <p><img src="https://user-images.githubusercontent.com/78474043/170528435-fea4a48b-76ae-4d42-8fa5-2a009976fcc9.jpg" class="image" alt="take-attendance"></p>
+
+    <p><code>/student_details</code> : Student details are also displayed on the website with the 
+    total number of days each student was present in the class. </p>
+    <p><img src="https://user-images.githubusercontent.com/78474043/170526633-f2bf41a6-8c62-420c-b3c4-52085726fa07.jpg" class="image" alt="student-details-page"></p>
+
+    <p><code>/attendance_details</code> : Here, the teacher is given two choices.
+    First, the teacher can see all of the attendance of a student.
+    Or second, the teacher can see the attendance of a class.</p>
+    <p><img src="https://user-images.githubusercontent.com/78474043/170526662-3db8b8a2-31ca-40e6-90cc-c5a6606d29b1.jpg" class="image" alt="attendance-details-page"></p>
+
+    <p><code>/enter_roll</code> : If the teacher chooses to see the attendance of one student then,
+    he will be directed to this url. Here, he can enter the roll number of the student
+    of which he wants the attendance to be displayed.</p>
+    <p><img src="https://user-images.githubusercontent.com/78474043/170526659-dbab8b5f-faf0-43ee-b2cd-34b45122c7e1.jpg" class="image" alt="enter-roll-page"></p>
+
+    <p><code>/display_by_roll</code> : Attendance for the student whose roll number was 
+    previously entered by the teacher will be displayed for all the days he was 
+    marked present with the date and time of attendance. 
+    Here, the teacher can also download the attendance as an excel-sheet by clicking
+    the <code>Download Attendance</code> button.</p>
+    <p><img src="https://user-images.githubusercontent.com/78474043/170526653-fad651ba-8d18-47d6-9e76-ef9b6d3f6385.jpg" class="image" alt="display-by-roll"></p>
+
+    <p><code>/enter_class</code> : If the teacher chooses to see the attendance of a class then,
+    he will be directed to this url. Here, he can enter the department, section, year,
+    course and teacher name of a class and the date for which he wants the 
+    attendance to be displayed.</p>
+    <p><img src="https://user-images.githubusercontent.com/78474043/170526657-3be6d405-0dc1-41a2-a82b-26a917a3202b.jpg" class="image" alt="enter-class"></p>
+
+    <p><code>/display_by_class</code> : Attendance for the class whose details were previously 
+    entered by the teacher will be displayed for the particular date entered.
+    Here also, the teacher can download the attendance as an excel-sheet by clicking
+    the <code>Download Attendance</code> button. </p>
+    <p><img src="https://user-images.githubusercontent.com/78474043/170526666-c2f4853f-e16b-440f-94b5-c2c882324447.jpg" class="image" alt="display-by-class"></p>
+
+    <p><code>/logout</code> : Teacher can logout from the website.</p>
+    
+    
+    <h2 id="run-locally">RUN LOCALLY</h2>
+    <p>Clone the project [Make sure you have git CLI installed]</p>
+    <pre><code class="lang-bash">  git <span class="hljs-keyword">clone</span> <span class="hljs-title">https</span>://github.com/Sneha1203/RECOGNITO.git
+    </code></pre>
+    <p>Go to the project directory.</p>
+    <p>Make a virtual environment after you have entered the root directory of the project.</p>
+    <pre><code class="lang-bash">  conda create --name <span class="hljs-keyword">env</span>
+
+    <span class="hljs-comment">#or</span>
+
+    pip -m venv <span class="hljs-keyword">env</span>
+    </code></pre>
+    <p>After making the virtual environment, activate it.</p>
+    <pre><code class="lang-bash">  conda <span class="hljs-built_in">activate</span> env      <span class="hljs-comment"># for conda</span>
+
+    env\Scripts\<span class="hljs-built_in">activate</span>        <span class="hljs-comment"># for pip</span>
+    </code></pre>
+    <p>After activating the virtual environment, install the following dependencies:</p>
+    <pre><code class="lang-bash"># <span class="hljs-keyword">for</span> conda
+    conda install -n <span class="hljs-keyword">env</span> flask
+    conda install -n <span class="hljs-keyword">env</span> flask_sqlalchemy
+    conda install -n <span class="hljs-keyword">env</span> flask_wtf
+    conda install -n <span class="hljs-keyword">env</span> wtforms
+    conda install -n <span class="hljs-keyword">env</span> email_validator
+    conda install -n <span class="hljs-keyword">env</span> flask_bcrypt
+    conda install -n <span class="hljs-keyword">env</span> flask_login
+    conda install -n <span class="hljs-keyword">env</span> Pillow
+    conda install -n <span class="hljs-keyword">env</span> opencv-<span class="hljs-keyword">python</span>
+    conda install -n <span class="hljs-keyword">env</span> opencv-contrib-<span class="hljs-keyword">python</span>
+    conda install -n <span class="hljs-keyword">env</span> numpy 
+    conda install -n <span class="hljs-keyword">env</span> pandas
+    conda install -n <span class="hljs-keyword">env</span> Pillow
+    conda install -n <span class="hljs-keyword">env</span> cmake
+    conda install -n <span class="hljs-keyword">env</span> dlib
+    conda install -n <span class="hljs-keyword">env</span> face-recognition
+
+    # <span class="hljs-keyword">for</span> pip
+    <span class="hljs-keyword">python</span> -m pip install flask
+    <span class="hljs-keyword">python</span> -m pip install flask_sqlalchemy
+    <span class="hljs-keyword">python</span> -m pip install flask_wtf
+    <span class="hljs-keyword">python</span> -m pip install wtforms
+    <span class="hljs-keyword">python</span> -m pip install email_validator
+    <span class="hljs-keyword">python</span> -m pip install flask_bcrypt
+    <span class="hljs-keyword">python</span> -m pip install flask_login
+    <span class="hljs-keyword">python</span> -m pip install Pillow
+    <span class="hljs-keyword">python</span> -m pip install opencv-<span class="hljs-keyword">python</span>
+    <span class="hljs-keyword">python</span> -m pip install opencv-contrib-<span class="hljs-keyword">python</span>
+    <span class="hljs-keyword">python</span> -m pip install numpy 
+    <span class="hljs-keyword">python</span> -m pip install pandas
+    <span class="hljs-keyword">python</span> -m pip install Pillow
+    <span class="hljs-keyword">python</span> -m pip install cmake
+    <span class="hljs-keyword">python</span> -m pip install dlib
+    <span class="hljs-keyword">python</span> -m pip install face-recognition
+    </code></pre>
+    <p>or you can simply execute</p>
+    <pre><code class="lang-bash">  conda <span class="hljs-keyword">install</span> --file requirements.txt     <span class="hljs-comment"># for conda</span>
+
+    pip <span class="hljs-keyword">install</span> -r requirements.txt       <span class="hljs-comment"># for pip</span>
+    </code></pre>
+    <p>After installing the dependencies, start the server by executing</p>
+    <pre><code class="lang-bash">  python <span class="hljs-keyword">run</span>.<span class="bash">py</span>
+    </code></pre>
+</body>
+<style> 
+    body {
+        margin: 50px;
+        font-family: 'Raleway', sans-serif;
+    }
+
+    .intro {
+        margin-top: 40px;
+        margin-bottom: 40px;
+        text-align:center; 
+
+    }
+
+    .recognito {
+        padding-bottom: 30px;
+        text-align:center; 
+        border-bottom: 3px solid #f1f1f1;  
+    }
+
+    .recognito a {
+        color: black;
+    }
+
+    .image {
+        display: block;
+        height: 400px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+
+    .sys-req {
+        margin-bottom:40px;
+    }
+
+    #structure {
+        border-top: 3px solid #f1f1f1;
+        padding: 30px;
+        margin-top: 40px;
+    }
+
+    #run-locally {
+        border-top: 3px solid #f1f1f1;
+        padding: 30px;
+        margin-top: 50px;
+    }
+</style>

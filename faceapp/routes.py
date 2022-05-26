@@ -336,6 +336,9 @@ def gen_frames():
 def take_attendance():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/documentation')
+def documentation():
+    return render_template('documentation.html')
 
 # logout
 @app.route('/logout')

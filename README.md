@@ -173,4 +173,4 @@ After installing the dependencies, start the server by executing
   python run.py
 ```
 
-
+Open http://localhost:5000/ and verify.
