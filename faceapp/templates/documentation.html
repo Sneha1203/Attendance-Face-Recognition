@@ -101,15 +101,15 @@
     <h2 id="run-locally">RUN LOCALLY</h2>
     <p>Clone the project [Make sure you have git CLI installed]</p>
     <pre><code class="lang-bash">  git <span class="hljs-keyword">clone</span> <span class="hljs-title">https</span>://github.com/Sneha1203/RECOGNITO.git
-    </code></pre>
-    <p>Go to the project directory.</p>
+    </code></pre><br>
+    <p>Go to the project directory.</p><br>
     <p>Make a virtual environment after you have entered the root directory of the project.</p>
     <pre><code class="lang-bash">  conda create --name <span class="hljs-keyword">env</span>
 
     <span class="hljs-comment">#or</span>
 
     pip -m venv <span class="hljs-keyword">env</span>
-    </code></pre>
+    </code></pre><br>
     <p>After making the virtual environment, activate it.</p>
     <pre><code class="lang-bash">  conda <span class="hljs-built_in">activate</span> env      <span class="hljs-comment"># for conda</span>
 
@@ -152,17 +152,19 @@
     <span class="hljs-keyword">python</span> -m pip install dlib
     <span class="hljs-keyword">python</span> -m pip install face-recognition
     </code></pre>
+    <br>
     <p>or you can simply execute</p>
     <pre><code class="lang-bash">  conda <span class="hljs-keyword">install</span> --file requirements.txt     <span class="hljs-comment"># for conda</span>
 
     pip <span class="hljs-keyword">install</span> -r requirements.txt       <span class="hljs-comment"># for pip</span>
     </code></pre>
+    <br>
     <p>If installing cmake or dlib possess any problem, you can refer to this video:
-        <a href="https://youtu.be/mu05Bjniaog">https://youtu.be/mu05Bjniaog</a></p>
+        <a href="https://youtu.be/mu05Bjniaog">https://youtu.be/mu05Bjniaog</a></p><br>
     <p>After installing the dependencies, start the server by executing</p>
     <pre><code class="lang-bash">  python <span class="hljs-keyword">run</span>.<span class="bash">py</span>
-    </code></pre>
-    <p>Open <a href="http://localhost:5000/">http://localhost:5000/</a> and verify.</p>
+    </code></pre><br>
+    <p class="last-ele">Open <a href="http://localhost:5000/">http://localhost:5000/</a> and verify.</p>
 </body>
 <style> 
     body {
@@ -211,5 +213,11 @@
         border-top: 3px solid #f1f1f1;
         padding: 30px;
         margin-top: 50px;
+    }
+
+    .last-ele {
+        padding-bottom: 60px;
+        border-bottom: 3px solid #f1f1f1;  
+
     }
 </style>
