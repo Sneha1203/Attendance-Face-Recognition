@@ -147,6 +147,12 @@ def update_attendance():
             db.session.commit()
         else:
             continue
+    students = Student.query.all()
+    for student in students:
+        roll_to_count = student.roll_no
+        no_of_present = Attendance.query.filter_by(roll_no=roll_to_count).count()
+        student.days_present = no_of_present
+        db.session.commit()
 
 
 # displays details of all the registered students with the number of days each student was present
@@ -155,11 +161,6 @@ def update_attendance():
 def student_details():
     update_attendance()
     students = Student.query.order_by(Student.roll_no).all()
-    for student in students:
-        roll_to_count = student.roll_no
-        no_of_present = Attendance.query.filter_by(roll_no=roll_to_count).count()
-        student.days_present = no_of_present
-        db.session.commit()
     return render_template('student_details.html', students=students)
 
 
