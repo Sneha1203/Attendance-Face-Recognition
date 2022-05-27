@@ -11,6 +11,12 @@ The teacher can also download the attendance records of a student or a class as
 an excel sheet.
 
 
+## Features
+
+- User-friendly web application that allows teachers to take attendance in an easier way.
+- Teacher can download attendance records of student or a class as an excel-sheet.
+
+
 ## System Requirements
 Make sure that the website has the permission to access the camera and the
 camera is not being accessed by some other websites.
@@ -177,3 +183,10 @@ After installing the dependencies, start the server by executing
 ```
 
 Open http://localhost:5000/ and verify.
+
+
+## Future Scope
+
+- User Authentication using Google accounts, Microsoft accounts, or Facebook accounts, etc.
+- Role-Based views for Teachers, Students and Higher Authority of any Organization.
+- Email notifications to parents or guardians of student whose attendance is below 75%.
