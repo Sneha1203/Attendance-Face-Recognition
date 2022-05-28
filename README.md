@@ -22,6 +22,11 @@ Make sure that the website has the permission to access the camera and the
 camera is not being accessed by some other websites.
 
 
+## Demo Video
+
+https://youtu.be/wuT3pb9hJ4Q
+
+
 
 ## STRUCTURE
 `/` or `/home` : Home page for RECOGNITO.
